@@ -1,7 +1,12 @@
 const express = require("express");
 const path = require("path");
+const errorHandle = require("./middleware/errorHandler");
+const { logger } = require("./middleware/logger");
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+// server logger
+app.use(logger);
 
 // to serve static file
 app.use("/", express.static(path.join(__dirname, "public")));
@@ -21,7 +26,8 @@ app.all("*", (req, res) => {
   }
 });
 
-
+//error handler
+app.use(errorHandle)
 
 // server connection
 app.listen(PORT, () => {
