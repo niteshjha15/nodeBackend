@@ -4,10 +4,13 @@ const errorHandle = require("./middleware/errorHandler");
 const { logger } = require("./middleware/logger");
 const app = express();
 const PORT = process.env.PORT || 8000;
+const dbConnect = require("./config/dbConnect");
+const mongoose = require("mongoose");
 
 // server logger
 app.use(logger);
 
+dbConnect();
 // to serve static file
 app.use("/", express.static(path.join(__dirname, "public")));
 
@@ -27,9 +30,12 @@ app.all("*", (req, res) => {
 });
 
 //error handler
-app.use(errorHandle)
+app.use(errorHandle);
 
-// server connection
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+//connect to database
+mongoose.connection.once("open", () => {
+  console.log("Database connected");
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 });
